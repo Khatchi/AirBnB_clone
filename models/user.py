@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""This module creates a User class that inherits from
+"""This module/script creates a User class that inherits from
 the BaseModel class.
 """
 
