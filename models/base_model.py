@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """
-This script contains the BaseModel class which contains
-contains all elements(attributes and method)common to all the
-subclasses.
+This script/module contains the BaseModel class which contains
+all elements(attributes and method)common to all the subclasses.
 """
 
 import uuid
