@@ -44,3 +44,64 @@ class FileStorage:
                         k, v in obj_dict.items}
 
             FileStorage.__objects = obj_dict
+
+    def Classes(self):
+        """This function returns the dictionary of all the
+        classes with their references.
+        The classes previously created are imported and the class
+        names used both as the key and value.
+        """
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.state import State
+        from models.city import City
+        from models.place import Place
+        from models.amenity import Amenity
+        from models.review import Review
+
+        classes = {"BaseModel": BaseModel, "User": User,
+                   "State": State, "City": City,
+                   "Amenity": Amenity, "Place": Place,
+                   "Review": Review}
+        return (Classes)
+
+    def attributes(self):
+        """This func. returns valid attribute and the
+        correcponding type for each classname in a nested dic.
+        """
+
+        attributes = {
+                "BaseModel": {"id": str,
+                              "created_at": datetime.datetime,
+                              "updated_at": datetime.datetime
+                              },
+                "User": {"email": str,
+                         "password": str,
+                         "first_name": str,
+                         "last_name": str
+                         },
+                "Sate": {"name": str
+                         }
+                "City": {"state_id": str,
+                         "name": str
+                         },
+                "Amenity": {"name": str
+                            },
+                "Place": {"city_id": str,
+                          "user.id": str,
+                          "name": str,
+                          "description": str,
+                          "number_rooms": int,
+                          "number_bathrooms": int,
+                          "max_guest": int,
+                          "price_by_night": int,
+                          "latidude": float,
+                          "longitude": float,
+                          "amenity_ids": list
+                          },
+                "Review": {"place_id": str,
+                           "user_id": str,
+                           "text": str
+                           }
+                }
+        return (attributes)
