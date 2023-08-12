@@ -1,76 +1,48 @@
 #!/usr/bin/python3
-"""
-This script/module contains the BaseModel class which contains
-all elements(attributes and method)common to all the subclasses.
-"""
-
+""" Module for Base """
 import uuid
+from uuid import uuid4
 from datetime import datetime
-from models import storage
+import models
+import json
+date_now = datetime.now()
 
-"""The uuid modules provides functionality to generate universally unique
-identifiers(uuids).
-The datetime module provides various methods for creating
-and manipulating datetime objects.
-The storage module handles data storage and retrieval.
-"""
+format_dt = "%Y-%m-%dT%H:%M:%S.%f"
 
 
-class BaseModel:
-
-    """This is the base class which provides shared functionality from which
-    other subclasses inherit from.
-    """
+class BaseModel():
+    """ BaseModel class """
 
     def __init__(self, *args, **kwargs):
-        """Defines a constructor which initializes instance attributes.
-
-        Args:
-            --> *args: parameter that accepts list of arguments
-            --> **kwargs: parameter that accept additionaly key-word
-                arguments as dict.
-        """
-
-        if kwargs is not None and kwargs != {}:
-            for key in kwargs:
-                if key == "created_at":
-                    self.__dict__["created_at"] = datetime.strftime(
-                        kwargs["created_at"], "%Y-%m-%dT%H:%M:%S.%f")
-                elif key == "updated_at":
-                    self.__dict__["updated_at"] = datetime.strftime(
-                        kwargs["updated_at"], "%Y-%m-%dT%H:%M:%S.%f")
-                else:
-                    self.__dict__[key] = kwargs[key]
-            else:
-                self.id = str(_uuid.uuid4())
-                self.created_at = datetime.now()
-                self.updated_at = datetime.now()
-                storage.new(self)
+        """ Initialization of Database """
+        if kwargs:
+            for key, item in kwargs.items():
+                if key in ['created_at', 'updated_at']:
+                    item = datetime.strptime(item, format_dt)
+                if key not in ['__class__']:
+                    setattr(self, key, item)
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = self.updated_at = date_now
+            models.storage.new(self)
 
     def __str__(self):
-        """This function(method) returns the string represenation
-        of the objects.
-        """
-
-        return "[{}] ({} {})".format(
-                type(self).__name__, self.id, self.__dict__)
+        """ str definition """
+        return ("[{}] ({}) {}".format(self.__class__.__name__,
+                                      self.id, self.__dict__))
 
     def save(self):
-        """A func. that updates the pub instance attr updated_at
-        to the currect time stamp.
-        """
-
-        self.updated_at = datetime.now()
-        storage.save()
+        """ save definition """
+        self.updated_at = date_now
+        models.storage.new(self)
+        models.storage.save()
 
     def to_dict(self):
-        """A func. that returns the key with the corresponding values
-        of a __dict__.
-        """
-
-        my_dict = self.__dict__.copy()
-        my_dict["__class__"] = type(self).__name__
-        my_dict["created_at"] = my_dict["created_at"].isoformat()
-        my_dict["updated_at"] = my_dict["updated_at"].isoformat()
-
-        return (my_dict)
+        """ to_dict definition """
+        dic = {}
+        for key, item in self.__dict__.items():
+            dic[key] = item
+        dic['__class__'] = self.__class__.__name__
+        dic['created_at'] = self.created_at.isoformat()
+        dic['updated_at'] = self.updated_at.isoformat()
+        return dic
